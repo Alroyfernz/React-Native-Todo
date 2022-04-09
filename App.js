@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useState, useCallback, useEffect} from 'react';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Task from './component/Task';
 
 export default function App() {
@@ -49,9 +50,7 @@ export default function App() {
             />
           </View>
           <TouchableOpacity style={styles.EnterButton} onPress={handleEnter}>
-            <Text style={{color: 'rgba(192, 192, 192, 1)', fontSize: 14}}>
-              +
-            </Text>
+            <Entypo name="plus" size={25} color="rgba(192, 192, 192, 1)" />
           </TouchableOpacity>
         </View>
       </View>
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
   EnterButton: {
     elevation: 3,
     backgroundColor: '#fff',
-    width: '15%',
+    width: '17%',
     padding: 15,
     borderRadius: 50,
     alignItems: 'center',

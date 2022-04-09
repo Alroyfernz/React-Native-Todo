@@ -9,14 +9,30 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from 'react-native';
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import Task from './component/Task';
 
 export default function App() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([]); //auxillary array to store all items
   const [groceryItem, setGroceryItem] = useState('');
+
+  const [filteredArray, setFilteredArray] = useState(items); //array to store filtered result
+  const handleSearch = () => {
+    //calculating the resultant of the search
+    const filter = items.filter(item => !item.search(groceryItem)); //using an auxillary array items to store global state which is not lost while filtering
+    setFilteredArray(filter); //storing the filtered result into an array to display
+  };
+  useEffect(() => {
+    handleSearch();
+  }, [groceryItem]);
   const handleEnter = useCallback(() => {
+    if (groceryItem == '') {
+      //if user passes a blank option warn him that we cannot add a blank item to list.
+      alert('Input cannot be blank!');
+      return;
+    }
     setItems([groceryItem, ...items]);
+    setFilteredArray(items);
     setGroceryItem('');
   }, [groceryItem, items]);
   return (
@@ -40,16 +56,23 @@ export default function App() {
         </View>
       </View>
       <View style={{padding: 15}}>
-        {items.length !== 0 && (
+        {filteredArray.length !== 0 && (
           <Text style={styles.HeadingText}>Today's Grocery List</Text>
         )}
 
         <ScrollView style={{marginTop: 10}}>
-          {items.map((item, idx) => {
+          {filteredArray.map((item, idx) => {
             return <Task key={idx} item={item} />;
           })}
+          {filteredArray.length == 0 && items.length !== 0 && (
+            <Text style={[styles.EmptyAlert, styles.EmptySearchAlert]}>
+              Item not found.Please add it to your list...
+            </Text>
+          )}
           {items.length == 0 && (
-            <Text style={styles.EmptyAlert}>Add items into your list...</Text>
+            <Text style={styles.EmptyAlert}>
+              Please add items to your list...
+            </Text>
           )}
         </ScrollView>
       </View>
@@ -81,6 +104,7 @@ const styles = StyleSheet.create({
     borderColor: '#C0C0C0',
     elevation: 3,
   },
+  EmptySearchAlert: {fontSize: 19},
   Input: {marginLeft: 20, color: '#000'},
   EnterButton: {
     elevation: 3,

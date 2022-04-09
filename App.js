@@ -6,7 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
+  Keyboard,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
   ScrollView,
 } from 'react-native';
 import React, {useState, useCallback, useEffect} from 'react';
@@ -37,45 +39,53 @@ export default function App() {
     setGroceryItem('');
   }, [groceryItem, items]);
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.TopContainer}>
-        <View style={styles.SearchMenu}>
-          <View style={styles.SearchBar}>
-            <TextInput
-              style={styles.Input}
-              placeholder="Enter items"
-              value={groceryItem}
-              placeholderTextColor="rgba(26, 26, 26, 1)"
-              onChangeText={setGroceryItem}
-            />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.TopContainer}>
+            <View style={styles.SearchMenu}>
+              <View style={styles.SearchBar}>
+                <TextInput
+                  style={styles.Input}
+                  placeholder="Enter items"
+                  value={groceryItem}
+                  placeholderTextColor="rgba(26, 26, 26, 1)"
+                  onChangeText={setGroceryItem}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.EnterButton}
+                onPress={handleEnter}>
+                <Entypo name="plus" size={25} color="rgba(192, 192, 192, 1)" />
+              </TouchableOpacity>
+            </View>
           </View>
-          <TouchableOpacity style={styles.EnterButton} onPress={handleEnter}>
-            <Entypo name="plus" size={25} color="rgba(192, 192, 192, 1)" />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={{padding: 15}}>
-        {filteredArray.length !== 0 && (
-          <Text style={styles.HeadingText}>Today's Grocery List</Text>
-        )}
+          <View style={{padding: 15}}>
+            {filteredArray.length !== 0 && (
+              <Text style={styles.HeadingText}>Today's Grocery List</Text>
+            )}
 
-        <ScrollView style={{marginTop: 10}}>
-          {filteredArray.map((item, idx) => {
-            return <Task key={idx} item={item} />;
-          })}
-          {filteredArray.length == 0 && items.length !== 0 && (
-            <Text style={[styles.EmptyAlert, styles.EmptySearchAlert]}>
-              Item not found.Please add it to your list...
-            </Text>
-          )}
-          {items.length == 0 && (
-            <Text style={styles.EmptyAlert}>
-              Please add items to your list...
-            </Text>
-          )}
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+            <ScrollView style={{marginTop: 10}}>
+              {filteredArray.map((item, idx) => {
+                return <Task key={idx} item={item} />;
+              })}
+              {filteredArray.length == 0 && items.length !== 0 && (
+                <Text style={[styles.EmptyAlert, styles.EmptySearchAlert]}>
+                  Item not found.Please add it to your list...
+                </Text>
+              )}
+              {items.length == 0 && (
+                <Text style={styles.EmptyAlert}>
+                  Please add items to your list...
+                </Text>
+              )}
+            </ScrollView>
+          </View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
